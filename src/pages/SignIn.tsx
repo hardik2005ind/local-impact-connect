@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Heart, Sparkles } from 'lucide-react';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -19,65 +20,79 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50 flex items-center justify-center py-12 px-4 relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute top-20 left-20 w-32 h-32 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+      <div className="absolute top-40 right-20 w-32 h-32 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse delay-1000"></div>
+      <div className="absolute -bottom-8 left-1/2 w-32 h-32 bg-rose-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse delay-500"></div>
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+          <Link to="/" className="inline-flex items-center gap-2 text-3xl font-bold text-gradient-pink mb-4">
+            <Heart className="h-8 w-8 text-pink-500" />
             Lokreach
           </Link>
-          <p className="text-gray-600 mt-2">Welcome back to your creative journey</p>
+          <p className="text-gray-600 text-lg">Welcome back to your creative journey</p>
         </div>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-gray-900">Sign In</CardTitle>
+        <Card className="bg-white/90 backdrop-blur-md border-0 shadow-2xl rounded-2xl overflow-hidden">
+          <CardHeader className="text-center pb-8 pt-8 bg-gradient-to-r from-pink-500/10 to-purple-500/10">
+            <div className="flex justify-center mb-4">
+              <div className="gradient-pink-maroon w-16 h-16 rounded-full flex items-center justify-center">
+                <Sparkles className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            <CardTitle className="text-2xl text-gray-900">Welcome Back!</CardTitle>
+            <p className="text-gray-600 mt-2">Sign in to continue your journey</p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="text-gray-700 font-medium">Email Address</Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className="bg-white/70"
+                  className="border-pink-200 focus:border-pink-400 focus:ring-pink-200 rounded-lg h-12"
+                  placeholder="Enter your email"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
                 <Input
                   id="password"
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                  className="bg-white/70"
+                  className="border-pink-200 focus:border-pink-400 focus:ring-pink-200 rounded-lg h-12"
+                  placeholder="Enter your password"
                   required
                 />
               </div>
 
               <div className="flex items-center justify-between">
-                <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700">
+                <Link to="/forgot-password" className="text-sm text-pink-600 hover:text-pink-700 transition-colors">
                   Forgot Password?
                 </Link>
               </div>
 
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+                className="w-full gradient-pink-maroon text-white hover:opacity-90 transition-all h-12 text-lg font-medium shadow-lg transform hover:scale-[1.02]"
               >
-                Sign In
+                Sign In to Lokreach
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center">
               <p className="text-gray-600">
                 Don't have an account?{' '}
-                <Link to="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
-                  Sign up here
+                <Link to="/signup" className="text-pink-600 hover:text-pink-700 font-medium transition-colors">
+                  Join Lokreach today
                 </Link>
               </p>
             </div>

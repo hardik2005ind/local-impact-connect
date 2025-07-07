@@ -1,80 +1,51 @@
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Users, Building2, MapPin, Shield, Zap, Eye } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Link } from "react-router-dom";
+import { 
+  Users, 
+  Building2, 
+  MapPin, 
+  Search, 
+  Zap, 
+  Shield, 
+  MessageSquare,
+  Mail,
+  Phone,
+  Star,
+  Heart,
+  TrendingUp
+} from "lucide-react";
 
 const Index = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Contact form submitted:', formData);
-    // Handle form submission
-  };
-
-  const stats = [
-    { number: '1000+', label: 'Active Creators' },
-    { number: '500+', label: 'Brand Partners' },
-    { number: '50+', label: 'Cities Covered' }
-  ];
-
-  const features = [
-    {
-      icon: MapPin,
-      title: 'Local Discovery',
-      description: 'Find creators in your target cities and regions'
-    },
-    {
-      icon: Zap,
-      title: 'Quick Campaigns',
-      description: 'Launch campaigns and get results in days, not months'
-    },
-    {
-      icon: Shield,
-      title: 'Secure Platform',
-      description: 'Protected payments and verified creator profiles'
-    },
-    {
-      icon: Eye,
-      title: 'Real-time Collaboration',
-      description: 'Track progress and communicate seamlessly'
-    }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50">
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+      <nav className="bg-white/90 backdrop-blur-md border-b border-pink-100 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                Lokreach
-              </Link>
+            <div className="text-2xl font-bold text-gradient-pink">
+              Lokreach
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors">Home</Link>
-              <Link to="/about" className="text-gray-700 hover:text-blue-600 transition-colors">About Us</Link>
-              <Link to="/contact" className="text-gray-700 hover:text-blue-600 transition-colors">Contact Us</Link>
+              <a href="#home" className="text-gray-700 hover:text-pink-600 transition-colors">Home</a>
+              <a href="#about" className="text-gray-700 hover:text-pink-600 transition-colors">About Us</a>
+              <a href="#contact" className="text-gray-700 hover:text-pink-600 transition-colors">Contact Us</a>
             </div>
-
+            
             <div className="flex items-center space-x-4">
-              <Link to="/signin">
-                <Button variant="outline" className="hover:bg-blue-50">Sign In</Button>
-              </Link>
               <Link to="/signup">
-                <Button className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700">
+                <Button className="gradient-pink-maroon text-white hover:opacity-90 transition-opacity shadow-lg">
                   Sign Up
+                </Button>
+              </Link>
+              <Link to="/signin">
+                <Button variant="outline" className="border-pink-300 text-pink-700 hover:bg-pink-50">
+                  Sign In
                 </Button>
               </Link>
             </div>
@@ -83,181 +54,266 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            The Marketplace Where <br />
-            <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              Influence Meets Local Impact
-            </span>
-          </h1>
-          
-          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Whether you're a brand looking to promote or someone ready to earn — you're in the right place.
-          </p>
+      <section id="home" className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-pink-100/50 to-purple-100/50"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              The Marketplace Where <span className="text-gradient-pink">Influence</span> Meets <span className="text-gradient-pink">Local Impact</span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+              Whether you're a brand looking to promote or someone ready to earn — you're in the right place.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+              <Link to="/signup?type=creator">
+                <Button size="lg" className="gradient-pink-maroon text-white hover:opacity-90 transition-all transform hover:scale-105 shadow-xl px-8 py-4 text-lg">
+                  <Users className="mr-2 h-5 w-5" />
+                  I am a Creator
+                </Button>
+              </Link>
+              <Link to="/signup?type=brand">
+                <Button size="lg" variant="outline" className="border-2 border-pink-300 text-pink-700 hover:bg-pink-50 transition-all transform hover:scale-105 px-8 py-4 text-lg">
+                  <Building2 className="mr-2 h-5 w-5" />
+                  We are a Brand
+                </Button>
+              </Link>
+            </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Link to="/signup?type=creator">
-              <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 px-8">
-                <Users className="mr-2 h-5 w-5" />
-                I am a Creator
-              </Button>
-            </Link>
-            <Link to="/signup?type=brand">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8">
-                <Building2 className="mr-2 h-5 w-5" />
-                We are a Brand
-              </Button>
-            </Link>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {stats.map((stat, index) => (
-              <Card key={index} className="bg-white/60 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-blue-600 mb-2">{stat.number}</div>
-                  <div className="text-gray-600">{stat.label}</div>
+                  <div className="gradient-pink-maroon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Users className="h-8 w-8 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">1000+</div>
+                  <div className="text-gray-600">Active Creators</div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose LocoLab */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/40">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center text-gray-900 mb-16">
-            Why Choose LocoLab?
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+              
+              <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-6 text-center">
-                  <feature.icon className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <div className="gradient-rose-burgundy w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Building2 className="h-8 w-8 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">500+</div>
+                  <div className="text-gray-600">Brand Partners</div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* About LocoLab */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-8">About LocoLab</h2>
-          
-          <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-            LocoLab revolutionizes how brands connect with local content creators across India, 
-            helping creators monetize their influence and brands reach targeted audiences with 
-            authentic, location-specific content.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16">
-            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-0 shadow-lg">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-blue-800 mb-4">Our Mission</h3>
-                <p className="text-blue-700">
-                  To democratize influencer marketing through authentic local connections, 
-                  data-driven partnerships, and transparent collaboration.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-0 shadow-lg">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-green-800 mb-4">Our Vision</h3>
-                <p className="text-green-700">
-                  To become India's leading local influencer marketing platform with a 
-                  nationwide creator network and AI-powered matching.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Get in Touch */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/40">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center text-gray-900 mb-16">Get in Touch</h2>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact Info */}
-            <div className="space-y-8">
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Address</h3>
-                  <p className="text-gray-600">
-                    123 Business District<br />
-                    Mumbai, Maharashtra 400001
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Email</h3>
-                  <p className="text-gray-600">
-                    hello@locolab.com<br />
-                    support@locolab.com
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Phone</h3>
-                  <p className="text-gray-600">
-                    +91 98765 43210<br />
-                    +91 98765 43211
-                  </p>
+              
+              <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg hover:shadow-xl transition-all duration-300">
+                <CardContent className="p-6 text-center">
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <MapPin className="h-8 w-8 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">50+</div>
+                  <div className="text-gray-600">Cities Covered</div>
                 </CardContent>
               </Card>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Contact Form */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+      {/* Why Choose Section */}
+      <section className="py-20 bg-white/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose <span className="text-gradient-pink">LocoLab</span>?</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Discover the features that make us the perfect platform for local influencer marketing</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+              <CardContent className="p-8 text-center">
+                <div className="gradient-pink-maroon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Search className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Local Discovery</h3>
+                <p className="text-gray-600">Find creators in your specific city or region for targeted local campaigns</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+              <CardContent className="p-8 text-center">
+                <div className="gradient-rose-burgundy w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Zap className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Campaigns</h3>
+                <p className="text-gray-600">Launch campaigns quickly and get applications from relevant creators</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+              <CardContent className="p-8 text-center">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Shield className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Secure Platform</h3>
+                <p className="text-gray-600">Safe and secure environment for all transactions and communications</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+              <CardContent className="p-8 text-center">
+                <div className="bg-gradient-to-r from-pink-400 to-rose-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <MessageSquare className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Real-time Collaboration</h3>
+                <p className="text-gray-600">Built-in messaging and collaboration tools for seamless communication</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-20 bg-gradient-to-r from-pink-50 to-purple-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">About <span className="text-gradient-pink">LocoLab</span></h2>
+              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                LocoLab revolutionizes how brands connect with local content creators across India. We help creators monetize their influence while enabling brands to reach targeted audiences with authentic, location-specific content.
+              </p>
+              
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="gradient-pink-maroon w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Heart className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Our Mission</h3>
+                    <p className="text-gray-600">To democratize influencer marketing through authentic local connections, data-driven partnerships, and transparent collaboration.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="gradient-rose-burgundy w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Our Vision</h3>
+                    <p className="text-gray-600">To become India's leading local influencer marketing platform with a nationwide creator network and AI-powered matching.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <div className="absolute inset-0 gradient-pink-soft rounded-3xl transform rotate-6"></div>
+              <Card className="relative bg-white/90 backdrop-blur-sm border-pink-100 shadow-2xl rounded-3xl overflow-hidden">
+                <CardContent className="p-8">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="text-center">
+                      <Star className="h-8 w-8 text-pink-500 mx-auto mb-2" />
+                      <div className="text-2xl font-bold text-gray-900">4.9/5</div>
+                      <div className="text-sm text-gray-600">Platform Rating</div>
+                    </div>
+                    <div className="text-center">
+                      <Heart className="h-8 w-8 text-pink-500 mx-auto mb-2" />
+                      <div className="text-2xl font-bold text-gray-900">98%</div>
+                      <div className="text-sm text-gray-600">Satisfaction Rate</div>
+                    </div>
+                    <div className="text-center">
+                      <TrendingUp className="h-8 w-8 text-pink-500 mx-auto mb-2" />
+                      <div className="text-2xl font-bold text-gray-900">5M+</div>
+                      <div className="text-sm text-gray-600">Reach Generated</div>
+                    </div>
+                    <div className="text-center">
+                      <Zap className="h-8 w-8 text-pink-500 mx-auto mb-2" />
+                      <div className="text-2xl font-bold text-gray-900">2.5K+</div>
+                      <div className="text-sm text-gray-600">Campaigns Run</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-20 bg-white/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Get in <span className="text-gradient-pink">Touch</span></h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Ready to start your journey? We'd love to hear from you</p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <div className="space-y-8">
+              <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="gradient-pink-maroon w-12 h-12 rounded-full flex items-center justify-center">
+                      <MapPin className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Address</h3>
+                      <p className="text-gray-600">123 Business District, Mumbai, Maharashtra 400001</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="gradient-rose-burgundy w-12 h-12 rounded-full flex items-center justify-center">
+                      <Mail className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Email</h3>
+                      <p className="text-gray-600">hello@locolab.com</p>
+                      <p className="text-gray-600">support@locolab.com</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-12 h-12 rounded-full flex items-center justify-center">
+                      <Phone className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Phone</h3>
+                      <p className="text-gray-600">+91 98765 43210</p>
+                      <p className="text-gray-600">+91 98765 43211</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg">
               <CardContent className="p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <Input
-                      placeholder="Name"
-                      value={formData.name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      className="bg-white/70"
-                    />
+                <form className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="name" className="border-pink-200 focus:border-pink-400" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input id="email" type="email" className="border-pink-200 focus:border-pink-400" />
+                    </div>
                   </div>
-                  <div>
-                    <Input
-                      type="email"
-                      placeholder="Email"
-                      value={formData.email}
-                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="bg-white/70"
-                    />
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">Subject</Label>
+                    <Input id="subject" className="border-pink-200 focus:border-pink-400" />
                   </div>
-                  <div>
-                    <Input
-                      placeholder="Subject"
-                      value={formData.subject}
-                      onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
-                      className="bg-white/70"
-                    />
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="message">Message</Label>
+                    <Textarea id="message" rows={4} className="border-pink-200 focus:border-pink-400" />
                   </div>
-                  <div>
-                    <Textarea
-                      placeholder="Message"
-                      value={formData.message}
-                      onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                      className="bg-white/70 min-h-[120px]"
-                    />
-                  </div>
-                  <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700">
+                  
+                  <Button className="w-full gradient-pink-maroon text-white hover:opacity-90 transition-opacity">
                     Send Message
                   </Button>
                 </form>
@@ -269,48 +325,45 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-1">
+              <div className="text-2xl font-bold text-gradient-pink mb-4">Lokreach</div>
+              <p className="text-gray-400 mb-6">The marketplace where influence meets local impact.</p>
+            </div>
+            
             <div>
-              <h3 className="text-xl font-bold mb-4 text-blue-400">Platform</h3>
+              <h3 className="font-semibold mb-4 text-pink-300">Platform</h3>
               <ul className="space-y-2">
-                <li><Link to="/creators" className="text-gray-300 hover:text-white transition-colors">For Creators</Link></li>
-                <li><Link to="/brands" className="text-gray-300 hover:text-white transition-colors">For Brands</Link></li>
-                <li><Link to="/success-stories" className="text-gray-300 hover:text-white transition-colors">Success Stories</Link></li>
+                <li><a href="#" className="text-gray-400 hover:text-pink-300 transition-colors">For Creators</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-pink-300 transition-colors">For Brands</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-pink-300 transition-colors">Success Stories</a></li>
               </ul>
             </div>
-
+            
             <div>
-              <h3 className="text-xl font-bold mb-4 text-green-400">Company</h3>
+              <h3 className="font-semibold mb-4 text-pink-300">Company</h3>
               <ul className="space-y-2">
-                <li><Link to="/about" className="text-gray-300 hover:text-white transition-colors">About Us</Link></li>
-                <li><Link to="/careers" className="text-gray-300 hover:text-white transition-colors">Careers</Link></li>
-                <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link></li>
+                <li><a href="#" className="text-gray-400 hover:text-pink-300 transition-colors">About Us</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-pink-300 transition-colors">Careers</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-pink-300 transition-colors">Contact</a></li>
               </ul>
             </div>
-
+            
             <div>
-              <h3 className="text-xl font-bold mb-4 text-purple-400">Support</h3>
+              <h3 className="font-semibold mb-4 text-pink-300">Support</h3>
               <ul className="space-y-2">
-                <li><Link to="/help" className="text-gray-300 hover:text-white transition-colors">Help Center</Link></li>
-                <li><Link to="/privacy" className="text-gray-300 hover:text-white transition-colors">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="text-gray-300 hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><a href="#" className="text-gray-400 hover:text-pink-300 transition-colors">Help Center</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-pink-300 transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-pink-300 transition-colors">Terms of Service</a></li>
               </ul>
-            </div>
-
-            <div>
-              <Link to="/" className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
-                Lokreach
-              </Link>
-              <p className="text-gray-300 mt-4">
-                The marketplace where influence meets local impact.
-              </p>
             </div>
           </div>
-
-          <div className="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
-            <p>LocoLab — The marketplace where influence meets local impact.</p>
-            <p className="mt-2">© 2024 LocoLab. All rights reserved. Made in India 🇮🇳</p>
+          
+          <div className="border-t border-gray-700 mt-12 pt-8 text-center">
+            <p className="text-gray-400">
+              LocoLab — The marketplace where influence meets local impact. © 2024 LocoLab. All rights reserved. Made in India ❤️
+            </p>
           </div>
         </div>
       </footer>
