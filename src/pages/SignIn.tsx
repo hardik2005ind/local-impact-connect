@@ -1,22 +1,44 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Heart, Sparkles } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Sign in:', formData);
-    // Handle sign in logic
+    setIsLoading(true);
+
+    try {
+      await signIn(formData.email, formData.password);
+      toast({
+        title: "Success!",
+        description: "You have been signed in successfully.",
+      });
+      navigate('/');
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to sign in. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -58,6 +80,7 @@ const SignIn = () => {
                   className="border-pink-200 focus:border-pink-400 focus:ring-pink-200 rounded-lg h-12"
                   placeholder="Enter your email"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -71,6 +94,7 @@ const SignIn = () => {
                   className="border-pink-200 focus:border-pink-400 focus:ring-pink-200 rounded-lg h-12"
                   placeholder="Enter your password"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -83,8 +107,9 @@ const SignIn = () => {
               <Button 
                 type="submit" 
                 className="w-full gradient-pink-maroon text-white hover:opacity-90 transition-all h-12 text-lg font-medium shadow-lg transform hover:scale-[1.02]"
+                disabled={isLoading}
               >
-                Sign In to Lokreach
+                {isLoading ? "Signing In..." : "Sign In to Lokreach"}
               </Button>
             </form>
 
