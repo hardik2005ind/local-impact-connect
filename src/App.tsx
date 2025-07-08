@@ -12,6 +12,8 @@ import BrandDashboard from "./pages/BrandDashboard";
 import CreatorDashboard from "./pages/CreatorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminSignIn from "./pages/AdminSignIn";
+import CreatorProfile from "./pages/CreatorProfile";
+import CampaignDetails from "./pages/CampaignDetails";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +33,8 @@ const App = () => (
             <Route path="/creator-dashboard" element={<CreatorDashboard />} />
             <Route path="/admin" element={<AdminSignIn />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/creator/:id" element={<CreatorProfile />} />
+            <Route path="/campaign/:id" element={<CampaignDetails />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
