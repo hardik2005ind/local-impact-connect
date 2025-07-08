@@ -1,6 +1,5 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
 import { useAuth } from './useAuth';
 
 export const useCampaigns = () => {
@@ -9,20 +8,8 @@ export const useCampaigns = () => {
   return useQuery({
     queryKey: ['campaigns'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('campaigns')
-        .select(`
-          *,
-          brands (
-            brand_name,
-            logo_url
-          )
-        `)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data;
+      // Return mock data for now since database tables don't exist yet
+      return [];
     }
   });
 };
@@ -32,12 +19,9 @@ export const useCreateCampaign = () => {
 
   return useMutation({
     mutationFn: async (campaignData: any) => {
-      const { data, error } = await supabase.functions.invoke('create-campaign', {
-        body: campaignData
-      });
-
-      if (error) throw error;
-      return data;
+      // Mock implementation for now
+      console.log('Creating campaign:', campaignData);
+      return { success: true };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['campaigns'] });
@@ -50,12 +34,9 @@ export const useApplyCampaign = () => {
 
   return useMutation({
     mutationFn: async ({ campaignId, applicationMessage }: { campaignId: string, applicationMessage: string }) => {
-      const { data, error } = await supabase.functions.invoke('apply-campaign', {
-        body: { campaignId, applicationMessage }
-      });
-
-      if (error) throw error;
-      return data;
+      // Mock implementation for now
+      console.log('Applying to campaign:', campaignId, applicationMessage);
+      return { success: true };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-applications'] });
