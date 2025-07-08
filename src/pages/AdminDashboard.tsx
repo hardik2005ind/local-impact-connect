@@ -5,52 +5,65 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, Users, Building2, Check, X, Eye, Crown, Heart } from 'lucide-react';
+import { Shield, Users, Building2, Crown, Heart } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useCreatorRequests, useBrandRequests } from '@/hooks/useAdmin';
+import { useCreators } from '@/hooks/useCreators';
+import { useBrands } from '@/hooks/useBrands';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+import CreatorReviewDialog from '@/components/CreatorReviewDialog';
+import BrandReviewDialog from '@/components/BrandReviewDialog';
 
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState('creator-requests');
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [brandDialogOpen, setBrandDialogOpen] = useState(false);
+  
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  const { data: creatorRequests, isLoading: loadingCreatorRequests } = useCreatorRequests();
+  const { data: brandRequests, isLoading: loadingBrandRequests } = useBrandRequests();
+  const { data: allCreators, isLoading: loadingCreators } = useCreators();
+  const { data: allBrands, isLoading: loadingBrands } = useBrands();
 
-  const mockCreatorRequests = [
-    {
-      id: 1,
-      name: "Priya Sharma",
-      instagram: "@priya_fashion",
-      city: "Mumbai",
-      niche: "Fashion",
-      mobile: "+91 98765 43210",
-      status: "pending"
-    },
-    {
-      id: 2,
-      name: "Rahul Kumar",
-      instagram: "@tech_rahul",
-      city: "Delhi",
-      niche: "Tech",
-      mobile: "+91 98765 43211",
-      status: "pending"
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed out successfully",
+        description: "You have been logged out.",
+      });
+      navigate('/');
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to sign out.",
+        variant: "destructive",
+      });
     }
-  ];
+  };
 
-  const mockBrandRequests = [
-    {
-      id: 1,
-      brandName: "Fashion Forward",
-      contact: "contact@fashionforward.com",
-      niche: "Fashion",
-      instagram: "@fashionforward_brand",
-      website: "https://fashionforward.com",
-      status: "pending"
-    },
-    {
-      id: 2,
-      brandName: "Tech Innovations",
-      contact: "+91 98765 43212",
-      niche: "Technology",
-      instagram: "@techinnovations",
-      website: "",
-      status: "pending"
-    }
-  ];
+  const handleCreatorReview = (request: any) => {
+    setSelectedRequest(request);
+    setReviewDialogOpen(true);
+  };
+
+  const handleBrandReview = (request: any) => {
+    setSelectedRequest(request);
+    setBrandDialogOpen(true);
+  };
+
+  const pendingCreatorRequests = creatorRequests?.filter(req => req.status === 'pending') || [];
+  const acceptedCreatorRequests = creatorRequests?.filter(req => req.status === 'accepted') || [];
+  const rejectedCreatorRequests = creatorRequests?.filter(req => req.status === 'rejected') || [];
+
+  const pendingBrandRequests = brandRequests?.filter(req => req.status === 'pending') || [];
+  const acceptedBrandRequests = brandRequests?.filter(req => req.status === 'accepted') || [];
+  const rejectedBrandRequests = brandRequests?.filter(req => req.status === 'rejected') || [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50 relative overflow-hidden">
@@ -113,7 +126,7 @@ const AdminDashboard = () => {
               >
                 All Brands
               </button>
-              <Button variant="outline" className="text-red-600 hover:bg-red-50 border-red-200">
+              <Button onClick={handleSignOut} variant="outline" className="text-red-600 hover:bg-red-50 border-red-200">
                 Logout
               </Button>
             </div>
@@ -129,43 +142,125 @@ const AdminDashboard = () => {
             
             <Tabs defaultValue="pending" className="w-full">
               <TabsList className="grid w-full grid-cols-3 bg-pink-50">
-                <TabsTrigger value="pending" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">Pending</TabsTrigger>
-                <TabsTrigger value="accepted" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">Accepted</TabsTrigger>
-                <TabsTrigger value="rejected" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">Rejected</TabsTrigger>
+                <TabsTrigger value="pending" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+                  Pending ({pendingCreatorRequests.length})
+                </TabsTrigger>
+                <TabsTrigger value="accepted" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+                  Accepted ({acceptedCreatorRequests.length})
+                </TabsTrigger>
+                <TabsTrigger value="rejected" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+                  Rejected ({rejectedCreatorRequests.length})
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="pending" className="space-y-6 mt-6">
-                {mockCreatorRequests.map(creator => (
+                {loadingCreatorRequests ? (
+                  <div>Loading...</div>
+                ) : pendingCreatorRequests.length === 0 ? (
+                  <Card className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+                    <CardContent className="p-8 text-center">
+                      <p className="text-gray-500">No pending creator requests</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  pendingCreatorRequests.map(creator => (
+                    <Card key={creator.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center gap-4">
+                            <Avatar className="h-12 w-12 ring-2 ring-pink-200">
+                              <AvatarImage src="/placeholder.svg" />
+                              <AvatarFallback className="bg-gradient-to-r from-pink-500 to-purple-600 text-white">
+                                {creator.name.split(' ').map((n: string) => n[0]).join('')}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">{creator.name}</h3>
+                              <p className="text-gray-600">{creator.instagram_handle}</p>
+                              <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                                <span>{creator.city}</span>
+                                <Badge variant="outline" className="border-pink-200 text-pink-600">{creator.content_niche}</Badge>
+                                <span>{creator.mobile_number}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              onClick={() => handleCreatorReview(creator)}
+                              variant="outline" 
+                              size="sm" 
+                              className="border-green-200 text-green-600 hover:bg-green-50"
+                            >
+                              Review & Accept
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
+
+              <TabsContent value="accepted" className="space-y-6 mt-6">
+                {acceptedCreatorRequests.map(creator => (
                   <Card key={creator.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
                     <CardContent className="p-6">
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-4">
-                          <Avatar className="h-12 w-12 ring-2 ring-pink-200">
+                          <Avatar className="h-12 w-12 ring-2 ring-green-200">
                             <AvatarImage src="/placeholder.svg" />
-                            <AvatarFallback className="bg-gradient-to-r from-pink-500 to-purple-600 text-white">{creator.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                            <AvatarFallback className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+                              {creator.name.split(' ').map((n: string) => n[0]).join('')}
+                            </AvatarFallback>
                           </Avatar>
                           <div>
                             <h3 className="text-lg font-semibold text-gray-900">{creator.name}</h3>
-                            <p className="text-gray-600">{creator.instagram}</p>
+                            <p className="text-gray-600">{creator.instagram_handle}</p>
                             <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
                               <span>{creator.city}</span>
-                              <Badge variant="outline" className="border-pink-200 text-pink-600">{creator.niche}</Badge>
-                              <span>{creator.mobile}</span>
+                              <Badge className="bg-green-100 text-green-700 border-green-200">Accepted</Badge>
                             </div>
                           </div>
                         </div>
-                        
-                        <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm" className="border-green-200 text-green-600 hover:bg-green-50">
-                            <Eye className="h-4 w-4 mr-2" />
-                            Review & Accept
-                          </Button>
-                          <Button variant="outline" size="sm" className="text-red-600 hover:bg-red-50 border-red-200">
-                            <X className="h-4 w-4 mr-2" />
-                            Reject
-                          </Button>
+                      </div>
+                      {creator.admin_notes && (
+                        <div className="mt-4 p-3 bg-green-50 rounded-lg">
+                          <p className="text-sm text-green-700"><strong>Admin Notes:</strong> {creator.admin_notes}</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="rejected" className="space-y-6 mt-6">
+                {rejectedCreatorRequests.map(creator => (
+                  <Card key={creator.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-12 w-12 ring-2 ring-red-200">
+                            <AvatarImage src="/placeholder.svg" />
+                            <AvatarFallback className="bg-gradient-to-r from-red-500 to-red-600 text-white">
+                              {creator.name.split(' ').map((n: string) => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">{creator.name}</h3>
+                            <p className="text-gray-600">{creator.instagram_handle}</p>
+                            <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                              <span>{creator.city}</span>
+                              <Badge className="bg-red-100 text-red-700 border-red-200">Rejected</Badge>
+                            </div>
+                          </div>
                         </div>
                       </div>
+                      {creator.admin_notes && (
+                        <div className="mt-4 p-3 bg-red-50 rounded-lg">
+                          <p className="text-sm text-red-700"><strong>Rejection Reason:</strong> {creator.admin_notes}</p>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
@@ -181,42 +276,114 @@ const AdminDashboard = () => {
             
             <Tabs defaultValue="pending" className="w-full">
               <TabsList className="grid w-full grid-cols-3 bg-pink-50">
-                <TabsTrigger value="pending" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">Pending</TabsTrigger>
-                <TabsTrigger value="verified" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">Verified</TabsTrigger>
-                <TabsTrigger value="rejected" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">Rejected</TabsTrigger>
+                <TabsTrigger value="pending" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+                  Pending ({pendingBrandRequests.length})
+                </TabsTrigger>
+                <TabsTrigger value="verified" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+                  Verified ({acceptedBrandRequests.length})
+                </TabsTrigger>
+                <TabsTrigger value="rejected" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+                  Rejected ({rejectedBrandRequests.length})
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="pending" className="space-y-6 mt-6">
-                {mockBrandRequests.map(brand => (
+                {loadingBrandRequests ? (
+                  <div>Loading...</div>
+                ) : pendingBrandRequests.length === 0 ? (
+                  <Card className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+                    <CardContent className="p-8 text-center">
+                      <p className="text-gray-500">No pending brand requests</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  pendingBrandRequests.map(brand => (
+                    <Card key={brand.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center gap-4">
+                            <div className="h-12 w-12 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center ring-2 ring-pink-200">
+                              <Building2 className="h-6 w-6 text-pink-600" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">{brand.brand_name}</h3>
+                              <p className="text-gray-600">{brand.business_contact}</p>
+                              <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                                <Badge variant="outline" className="border-pink-200 text-pink-600">{brand.business_niche}</Badge>
+                                {brand.instagram_handle && <span>{brand.instagram_handle}</span>}
+                                {brand.website && <span>{brand.website}</span>}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              onClick={() => handleBrandReview(brand)}
+                              variant="outline" 
+                              size="sm" 
+                              className="text-green-600 hover:bg-green-50 border-green-200"
+                            >
+                              Review & Accept
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
+
+              <TabsContent value="verified" className="space-y-6 mt-6">
+                {acceptedBrandRequests.map(brand => (
                   <Card key={brand.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
                     <CardContent className="p-6">
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center ring-2 ring-pink-200">
-                            <Building2 className="h-6 w-6 text-pink-600" />
+                          <div className="h-12 w-12 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center ring-2 ring-green-300">
+                            <Building2 className="h-6 w-6 text-green-600" />
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold text-gray-900">{brand.brandName}</h3>
-                            <p className="text-gray-600">{brand.contact}</p>
+                            <h3 className="text-lg font-semibold text-gray-900">{brand.brand_name}</h3>
+                            <p className="text-gray-600">{brand.business_contact}</p>
                             <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                              <Badge variant="outline" className="border-pink-200 text-pink-600">{brand.niche}</Badge>
-                              {brand.instagram && <span>{brand.instagram}</span>}
-                              {brand.website && <span>{brand.website}</span>}
+                              <Badge className="bg-green-100 text-green-700 border-green-200">Verified</Badge>
                             </div>
                           </div>
                         </div>
-                        
-                        <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm" className="text-green-600 hover:bg-green-50 border-green-200">
-                            <Check className="h-4 w-4 mr-2" />
-                            Accept
-                          </Button>
-                          <Button variant="outline" size="sm" className="text-red-600 hover:bg-red-50 border-red-200">
-                            <X className="h-4 w-4 mr-2" />
-                            Reject
-                          </Button>
+                      </div>
+                      {brand.admin_notes && (
+                        <div className="mt-4 p-3 bg-green-50 rounded-lg">
+                          <p className="text-sm text-green-700"><strong>Admin Notes:</strong> {brand.admin_notes}</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="rejected" className="space-y-6 mt-6">
+                {rejectedBrandRequests.map(brand => (
+                  <Card key={brand.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 bg-gradient-to-br from-red-100 to-red-200 rounded-lg flex items-center justify-center ring-2 ring-red-300">
+                            <Building2 className="h-6 w-6 text-red-600" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">{brand.brand_name}</h3>
+                            <p className="text-gray-600">{brand.business_contact}</p>
+                            <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                              <Badge className="bg-red-100 text-red-700 border-red-200">Rejected</Badge>
+                            </div>
+                          </div>
                         </div>
                       </div>
+                      {brand.admin_notes && (
+                        <div className="mt-4 p-3 bg-red-50 rounded-lg">
+                          <p className="text-sm text-red-700"><strong>Rejection Reason:</strong> {brand.admin_notes}</p>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
@@ -228,39 +395,112 @@ const AdminDashboard = () => {
         {/* All Creators */}
         {activeSection === 'all-creators' && (
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">All Creators</h1>
-            <Card className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
-              <CardContent className="p-8">
-                <div className="text-center py-12">
+            <h1 className="text-3xl font-bold text-gray-900 mb-8">All Verified Creators</h1>
+            
+            {loadingCreators ? (
+              <div>Loading...</div>
+            ) : !allCreators || allCreators.length === 0 ? (
+              <Card className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+                <CardContent className="p-8 text-center">
                   <div className="gradient-pink-maroon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Users className="h-8 w-8 text-white" />
                   </div>
-                  <h3 className="text-xl text-gray-600 mb-4">Creator Management</h3>
-                  <p className="text-gray-500">View and manage all verified creators</p>
-                </div>
-              </CardContent>
-            </Card>
+                  <h3 className="text-xl text-gray-600 mb-4">No Verified Creators</h3>
+                  <p className="text-gray-500">No verified creators found in the system</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid gap-6">
+                {allCreators.map(creator => (
+                  <Card key={creator.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-12 w-12 ring-2 ring-pink-200">
+                            <AvatarImage src={creator.profile_picture_url || "/placeholder.svg"} />
+                            <AvatarFallback className="bg-gradient-to-r from-pink-500 to-purple-600 text-white">
+                              {creator.name.split(' ').map((n: string) => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">{creator.name}</h3>
+                            <p className="text-gray-600">{creator.instagram_handle}</p>
+                            <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                              <span>{creator.city}</span>
+                              <Badge variant="outline" className="border-pink-200 text-pink-600">{creator.content_niche}</Badge>
+                              <span>{creator.follower_count?.toLocaleString()} followers</span>
+                            </div>
+                          </div>
+                        </div>
+                        <Badge className="bg-green-100 text-green-700 border-green-200">Verified</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {/* All Brands */}
         {activeSection === 'all-brands' && (
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">All Brands</h1>
-            <Card className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
-              <CardContent className="p-8">
-                <div className="text-center py-12">
+            <h1 className="text-3xl font-bold text-gray-900 mb-8">All Verified Brands</h1>
+            
+            {loadingBrands ? (
+              <div>Loading...</div>
+            ) : !allBrands || allBrands.length === 0 ? (
+              <Card className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+                <CardContent className="p-8 text-center">
                   <div className="gradient-pink-maroon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Building2 className="h-8 w-8 text-white" />
                   </div>
-                  <h3 className="text-xl text-gray-600 mb-4">Brand Management</h3>
-                  <p className="text-gray-500">View and manage all verified brands</p>
-                </div>
-              </CardContent>
-            </Card>
+                  <h3 className="text-xl text-gray-600 mb-4">No Verified Brands</h3>
+                  <p className="text-gray-500">No verified brands found in the system</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid gap-6">
+                {allBrands.map(brand => (
+                  <Card key={brand.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center ring-2 ring-pink-200">
+                            <Building2 className="h-6 w-6 text-pink-600" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">{brand.brand_name}</h3>
+                            <p className="text-gray-600">{brand.business_contact}</p>
+                            <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                              <Badge variant="outline" className="border-pink-200 text-pink-600">{brand.business_niche}</Badge>
+                              {brand.website && <span>{brand.website}</span>}
+                            </div>
+                          </div>
+                        </div>
+                        <Badge className="bg-green-100 text-green-700 border-green-200">Verified</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
+
+      {/* Review Dialogs */}
+      <CreatorReviewDialog
+        open={reviewDialogOpen}
+        onOpenChange={setReviewDialogOpen}
+        request={selectedRequest}
+      />
+
+      <BrandReviewDialog
+        open={brandDialogOpen}
+        onOpenChange={setBrandDialogOpen}
+        request={selectedRequest}
+      />
     </div>
   );
 };

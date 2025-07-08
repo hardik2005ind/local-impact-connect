@@ -13,6 +13,7 @@ import CreatorDashboard from "./pages/CreatorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminSignIn from "./pages/AdminSignIn";
 import CreatorProfile from "./pages/CreatorProfile";
+import BrandProfile from "./pages/BrandProfile";
 import CampaignDetails from "./pages/CampaignDetails";
 import NotFound from "./pages/NotFound";
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/admin" element={<AdminSignIn />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/creator/:id" element={<CreatorProfile />} />
+            <Route path="/brand/:id" element={<BrandProfile />} />
             <Route path="/campaign/:id" element={<CampaignDetails />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

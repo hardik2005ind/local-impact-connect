@@ -7,26 +7,30 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Search, Filter, MapPin, Users, Heart, MessageCircle, Star, Crown, TrendingUp, Loader2, LogOut } from 'lucide-react';
+import { Search, Filter, MapPin, Users, Heart, MessageCircle, Star, Crown, TrendingUp, Loader2, LogOut, Building2, Globe, Instagram, Mail } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreators } from '@/hooks/useCreators';
 import { useBrandCampaigns } from '@/hooks/useCampaigns';
+import { useBrandProfile } from '@/hooks/useBrands';
 import { useToast } from '@/hooks/use-toast';
 import CampaignCreateForm from '@/components/CampaignCreateForm';
+import BrandProfileEdit from '@/components/BrandProfileEdit';
 
 const BrandDashboard = () => {
   const [activeTab, setActiveTab] = useState('find-creators');
   const [searchCity, setSearchCity] = useState('');
   const [isCreateCampaignOpen, setIsCreateCampaignOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const { toast } = useToast();
   
   const { data: creators, isLoading: creatorsLoading } = useCreators({
     city: searchCity || undefined
   });
   const { data: myCampaigns, isLoading: campaignsLoading } = useBrandCampaigns();
+  const { data: brandProfile, isLoading: profileLoading } = useBrandProfile(user?.id || '');
 
   const handleSignOut = async () => {
     try {
@@ -230,32 +234,7 @@ const BrandDashboard = () => {
               <h1 className="text-3xl font-bold text-gray-900">Create New Campaign</h1>
             </div>
             
-            <Button 
-              onClick={() => setIsCreateCampaignOpen(true)}
-              className="gradient-pink-maroon text-white hover:opacity-90 transition-opacity mb-6"
-            >
-              Create Campaign
-            </Button>
-
-            <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg">
-              <CardContent className="p-12">
-                <div className="text-center py-16">
-                  <div className="gradient-pink-maroon w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Star className="h-10 w-10 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Ready to Launch Your Campaign?</h3>
-                  <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
-                    Create engaging campaigns and connect with the perfect creators for your brand.
-                  </p>
-                  <Button 
-                    onClick={() => setIsCreateCampaignOpen(true)}
-                    className="gradient-pink-maroon text-white hover:opacity-90 transition-opacity"
-                  >
-                    Get Started
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <CampaignCreateForm onClose={() => {}} />
           </div>
         )}
 
@@ -299,9 +278,11 @@ const BrandDashboard = () => {
                             </span>
                           </div>
                         </div>
-                        <Button variant="outline" className="border-pink-300 text-pink-700 hover:bg-pink-50">
-                          View Applications
-                        </Button>
+                        <Link to={`/campaign/${campaign.id}`}>
+                          <Button variant="outline" className="border-pink-300 text-pink-700 hover:bg-pink-50">
+                            View Details
+                          </Button>
+                        </Link>
                       </div>
                     </CardContent>
                   </Card>
@@ -335,22 +316,131 @@ const BrandDashboard = () => {
               <h1 className="text-3xl font-bold text-gray-900">Brand Profile</h1>
             </div>
             
-            <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg">
-              <CardContent className="p-12">
-                <div className="text-center py-16">
-                  <div className="bg-gradient-to-r from-pink-400 to-rose-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Users className="h-10 w-10 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Profile Management</h3>
-                  <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
-                    Comprehensive brand profile management tools are being developed to give you complete control over your brand presence.
-                  </p>
-                  <Button className="gradient-rose-burgundy text-white hover:opacity-90 transition-opacity">
-                    Coming Soon
-                  </Button>
+            {profileLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Profile Card */}
+                <div className="lg:col-span-2">
+                  <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg mb-6">
+                    <CardContent className="p-8">
+                      <div className="flex items-start gap-6 mb-6">
+                        <Avatar className="h-20 w-20 ring-4 ring-pink-200">
+                          <AvatarImage src={brandProfile?.logo_url || "/placeholder.svg"} />
+                          <AvatarFallback className="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xl">
+                            {brandProfile?.brand_name?.charAt(0) || 'B'}
+                          </AvatarFallback>
+                        </Avatar>
+                        
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h2 className="text-2xl font-bold text-gray-900">{brandProfile?.brand_name || 'Your Brand'}</h2>
+                            {brandProfile?.is_verified && (
+                              <Badge className="bg-green-100 text-green-700 border-green-200">Verified</Badge>
+                            )}
+                          </div>
+                          
+                          <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-4">
+                            {brandProfile?.business_niche && (
+                              <div className="flex items-center gap-1">
+                                <Building2 className="h-4 w-4" />
+                                <span>{brandProfile.business_niche}</span>
+                              </div>
+                            )}
+                            
+                            {brandProfile?.business_contact && (
+                              <div className="flex items-center gap-1">
+                                <Mail className="h-4 w-4" />
+                                <span>{brandProfile.business_contact}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex flex-wrap gap-3 mb-4">
+                            {brandProfile?.website && (
+                              <a 
+                                href={brandProfile.website} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm"
+                              >
+                                <Globe className="h-3 w-3" />
+                                Website
+                              </a>
+                            )}
+                            
+                            {brandProfile?.instagram_handle && (
+                              <a 
+                                href={`https://instagram.com/${brandProfile.instagram_handle.replace('@', '')}`}
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-3 py-1 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 transition-colors text-sm"
+                              >
+                                <Instagram className="h-3 w-3" />
+                                {brandProfile.instagram_handle}
+                              </a>
+                            )}
+                          </div>
+
+                          <Button 
+                            onClick={() => setIsEditProfileOpen(true)}
+                            className="gradient-pink-maroon text-white hover:opacity-90"
+                          >
+                            Update Profile
+                          </Button>
+                        </div>
+                      </div>
+
+                      {brandProfile?.about && (
+                        <div>
+                          <h3 className="font-semibold text-gray-900 mb-3">About</h3>
+                          <p className="text-gray-700 leading-relaxed">{brandProfile.about}</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
+
+                {/* Stats Sidebar */}
+                <div>
+                  <Card className="bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-semibold">Campaign Stats</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="text-center p-4 bg-green-50 rounded-lg">
+                        <div className="text-2xl font-bold text-green-600">
+                          {myCampaigns?.filter(c => c.status === 'active').length || 0}
+                        </div>
+                        <div className="text-sm text-green-700">Active Campaigns</div>
+                      </div>
+                      
+                      <div className="text-center p-4 bg-blue-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">
+                          {myCampaigns?.filter(c => c.status === 'completed').length || 0}
+                        </div>
+                        <div className="text-sm text-blue-700">Completed</div>
+                      </div>
+                      
+                      <div className="text-center p-4 bg-purple-50 rounded-lg">
+                        <div className="text-2xl font-bold text-purple-600">{myCampaigns?.length || 0}</div>
+                        <div className="text-sm text-purple-700">Total Campaigns</div>
+                      </div>
+
+                      <div className="pt-4">
+                        <Link to={`/brand/${user?.id}`}>
+                          <Button variant="outline" className="w-full">
+                            View Public Profile
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -362,6 +452,19 @@ const BrandDashboard = () => {
             <DialogTitle>Create New Campaign</DialogTitle>
           </DialogHeader>
           <CampaignCreateForm onClose={() => setIsCreateCampaignOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Profile Dialog */}
+      <Dialog open={isEditProfileOpen} onOpenChange={setIsEditProfileOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Brand Profile</DialogTitle>
+          </DialogHeader>
+          <BrandProfileEdit 
+            brand={brandProfile} 
+            onClose={() => setIsEditProfileOpen(false)} 
+          />
         </DialogContent>
       </Dialog>
     </div>
